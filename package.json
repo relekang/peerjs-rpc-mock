@@ -25,7 +25,7 @@
     "LICENSE",
     "package.json",
     "README.md",
-    "lib/RPCMock"
+    "lib/RPCMock.js"
   ],
   "dependencies": {
     "bluebird": "^2.9.12",
