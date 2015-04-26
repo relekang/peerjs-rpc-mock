@@ -2,9 +2,8 @@ import bluebird as Promise
 import mock-require as mr
 RPC = require('peerjs-rpc')
 
-export RPCMock
-
 mocks = {}
+export init
 
 class RPCMock extends RPC
 
@@ -19,6 +18,7 @@ class RPCMock extends RPC
       @timeout = options.timeout or 5000
 
   _sendInvocation: (id, payload, connection) ->
+    if id == undefined then throw 'Can not send to a node with undefined id'
     that = @
     delay = 0
     if id in @delays
@@ -33,7 +33,7 @@ class RPCMock extends RPC
             resolve(result)
         mocks[id]._onData(null, payload)
       , delay)
-      
+
       that._timeouts[payload.signature] = setTimeout(() ->
         clearTimeout(delayTimeout)
         reject(new Error('Message timed out.'))
@@ -41,6 +41,7 @@ class RPCMock extends RPC
     )
 
   _sendAnswer: (id, payload, connection) ->
+    if id == undefined then throw 'Can not send to a node with undefined id'
     delay = 0
     if id in @delays
       delay = @delays[id]
@@ -49,3 +50,7 @@ class RPCMock extends RPC
         resolve(mocks[id]._onData(null, payload))
       , delay)
     )
+
+init = (_mocks) ->
+  mocks = _mocks or {}
+  return RPCMock
