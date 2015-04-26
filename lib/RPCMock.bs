@@ -18,7 +18,7 @@ class RPCMock extends RPC
       @timeout = options.timeout or 5000
 
   _sendInvocation: (id, payload, connection) ->
-    if id == undefined then throw 'Can not send to a node with undefined id'
+    if id == undefined then throw new Error('Can not send to a node with undefined id')
     that = @
     delay = 0
     if id in @delays
@@ -41,7 +41,7 @@ class RPCMock extends RPC
     )
 
   _sendAnswer: (id, payload, connection) ->
-    if id == undefined then throw 'Can not send to a node with undefined id'
+    if id == undefined then throw new Error('Can not send to a node with undefined id')
     delay = 0
     if id in @delays
       delay = @delays[id]
