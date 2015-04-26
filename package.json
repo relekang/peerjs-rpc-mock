@@ -1,0 +1,46 @@
+{
+  "name": "peerjs-rpc-mock",
+  "version": "1.0.0",
+  "description": "Mock for peerjs-rpc, mainly built for nodejs simulations",
+  "main": "lib/RPCMock",
+  "scripts": {
+    "test": "istanbul cover _mocha test/ && istanbul report cobertura"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/relekang/peerjs-rpc.git"
+  },
+  "keywords": [
+    "rpc",
+    "peerjs",
+    "remote-procedure-call"
+  ],
+  "author": "Rolf Erik Lekang <me@rolflekang.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/relekang/peerjs-rpc/issues"
+  },
+  "homepage": "https://github.com/relekang/peerjs-rpc",
+  "files": [
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "lib/RPCMock"
+  ],
+  "dependencies": {
+    "bluebird": "^2.9.12",
+    "mock-require": "^1.0.5",
+    "peerjs-rpc": "3.1.0"
+  },
+  "devDependencies": {
+    "bailey": "0.0.15",
+    "chai": "*",
+    "istanbul": "*",
+    "karma": "*",
+    "karma-browserify": "*",
+    "karma-cli": "*",
+    "karma-mocha": "*",
+    "karma-phantomjs-launcher": "*",
+    "mocha": "*"
+  }
+}
