@@ -8,11 +8,15 @@ mocks = {}
 
 class RPCMock extends RPC
 
-  init: (id, scope) ->
+  init: (id, scope, options) ->
     @id = id
     @scope = scope
     mocks[id] = @
     @delays = {}
+    @timeout = 5000
+    if options
+      @delays = {}
+      @timeout = options.timeout or 5000
 
   _sendInvocation: (id, payload, connection) ->
     that = @
@@ -20,10 +24,7 @@ class RPCMock extends RPC
     if id in @delays
       delay = @delays[id]
     return new Promise((resolve, reject) ->
-      setTimeout(() ->
-        that._timeouts[payload.signature] = setTimeout(() ->
-          reject(new Error('Message timed out.'))
-        , that.timeout)
+      delayTimeout = setTimeout(() ->
         that._callbacks[payload.signature] = (result) ->
           clearTimeout(that._timeouts[payload.signature])
           if result instanceof Error
@@ -31,8 +32,12 @@ class RPCMock extends RPC
           else
             resolve(result)
         mocks[id]._onData(null, payload)
-
       , delay)
+      
+      that._timeouts[payload.signature] = setTimeout(() ->
+        clearTimeout(delayTimeout)
+        reject(new Error('Message timed out.'))
+      , that.timeout)
     )
 
   _sendAnswer: (id, payload, connection) ->

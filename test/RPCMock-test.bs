@@ -38,8 +38,9 @@ describe('RPCMock', () ->
       )
     )
 
-    xit('should return false if ping times out', (done) ->
-      n = new RPCMock('n', scope, { timeout: 1 })
+    it('should return false if ping times out', (done) ->
+      n = new RPCMock('n', scope, { timeout: 10 })
+      n.delays = { n2: 200 }
       n.ping('n2', (err, result) ->
         expect(result).to.be.false
         done()
@@ -107,8 +108,9 @@ describe('RPCMock', () ->
         )
     )
 
-    xit('should return false if ping times out', () ->
-      n = new RPCMock('n', scope, { timeout: 1 })
+    it('should return false if ping times out', () ->
+      n = new RPCMock('n', scope, { timeout: 10 })
+      n.delays = {n2: 200}
       return n.ping('n2')
         .then((result) ->
           expect(result).to.be.false

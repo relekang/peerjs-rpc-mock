@@ -27,7 +27,7 @@ describe('RPCMock', function() {
         n2 = new RPCMock('n2', scope);
     });
 
-    it('should use delays', function() {
+    it('should use delays if they are specified', function() {
         var start = Date.now();
         n1.delays = {
             'n2': 250
@@ -50,10 +50,13 @@ describe('RPCMock', function() {
             });
         });
 
-        xit('should return false if ping times out', function(done) {
+        it('should return false if ping times out', function(done) {
             var n = new RPCMock('n', scope, {
-                'timeout': 1
+                'timeout': 10
             });
+            n.delays = {
+                'n2': 200
+            };
             n.ping('n2', function(err, result) {
                 expect(result).to.be.false;
                 done();
@@ -130,10 +133,13 @@ describe('RPCMock', function() {
             });
         });
 
-        xit('should return false if ping times out', function() {
+        it('should return false if ping times out', function() {
             var n = new RPCMock('n', scope, {
-                'timeout': 1
+                'timeout': 10
             });
+            n.delays = {
+                'n2': 200
+            };
             return n.ping('n2').then(function(result) {
                 expect(result).to.be.false;
             });
