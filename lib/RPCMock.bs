@@ -25,10 +25,10 @@ class RPCMock extends RPC
       delay = @delays[id]
     return new Promise((resolve, reject) ->
       delayTimeout = setTimeout(() ->
-        that._callbacks[payload.signature] = (result) ->
+        that._callbacks[payload.signature] = (error, result) ->
           clearTimeout(that._timeouts[payload.signature])
-          if result instanceof Error
-            reject(result)
+          if error
+            reject(error)
           else
             resolve(result)
         mocks[id]._onData(null, payload)

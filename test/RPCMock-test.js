@@ -2,6 +2,8 @@ var __module_chai = require("chai");
 var RPCMock = require("../lib/RPCMock");
 var expect = __module_chai.expect;
 
+RPCMock = RPCMock();
+
 describe('RPCMock', function() {
     var scope = {
         'ping': function(arg, callback) {

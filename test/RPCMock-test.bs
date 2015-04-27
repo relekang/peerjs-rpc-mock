@@ -1,6 +1,8 @@
 import chai: expect
 import ../lib/RPCMock
 
+RPCMock = RPCMock()
+
 describe('RPCMock', () ->
   scope = {
     ping: (arg, callback) -> callback(null, 'pong: #{arg}')
