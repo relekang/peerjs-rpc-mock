@@ -9,6 +9,7 @@ describe('RPCMock', () ->
     pinger: (callback) -> callback(null, 'pong')
     add: (arg1, arg2, callback) -> callback(null, arg1 + arg2)
     getAnswer: (callback) -> callback(null, @answer)
+    error: (callback) -> callback(new Error('this is an error'))
     answer: 42
   }
 
@@ -32,136 +33,164 @@ describe('RPCMock', () ->
       )
   )
 
-  describe('using callbacks', () ->
-    it('should ping and receive pong', (done) ->
-      n1.ping('n2', (err, result) ->
-        expect(result).to.be.truthy
-        done()
+  describe('.invoke()', () ->
+    describe('using callbacks', () ->
+      it('should invoke with no arguments and return value', (done) ->
+        n1.invoke('n2', 'pinger', [], (err, result) ->
+          if err then return done(err)
+
+          expect(result).to.equal('pong')
+          done()
+        )
+      )
+
+      it('should invoke with one argument and return value', (done) ->
+        n1.invoke('n2', 'ping', ['42'], (err, result) ->
+          if err then return done(err)
+
+          expect(result).to.equal('pong: 42')
+          done()
+        )
+      )
+
+      it('should return error of invoked function', (done) ->
+        n1.invoke('n2', 'error', [], (err, result) ->
+          expect(err.message).to.equal('this is an error')
+          done()
+        )
+      )
+
+      it('should invoke with multiple arguments and return value', (done) ->
+        n1.invoke('n2', 'add', [40, 2], (err, result) ->
+          if err then return done(err)
+
+          expect(result).to.equal(42)
+          done()
+        )
+      )
+
+      it('should be able to reference scope in invoked functions', (done) ->
+        n1.invoke('n2', 'getAnswer', [], (err, result) ->
+          if err then return done(err)
+
+          expect(result).to.equal(42)
+          done()
+        )
+      )
+
+      it('should return error if the function does not exits', (done) ->
+        n1.invoke('n2', 'non-existing-function', [], (err, result) ->
+          expect(err.message).to.equal('unknown function')
+          done()
+        )
       )
     )
-
-    it('should return false if ping times out', (done) ->
-      n = new RPCMock('n', scope, { timeout: 10 })
-      n.delays = { n2: 200 }
-      n.ping('n2', (err, result) ->
-        expect(result).to.be.false
-        done()
+    describe('using promises', () ->
+      it('should invoke with no arguments and return value', () ->
+        return n1.invoke('n2', 'pinger', [])
+          .then((result) ->
+            expect(result).to.equal('pong')
+          )
       )
-    )
 
-    it('should invoke with no arguments and return value', (done) ->
-      n1.invoke('n2', 'pinger', undefined, (err, result) ->
-        if err then return done(err)
-
-        expect(result).to.equal('pong')
-        done()
+      it('should invoke with one argument and return value', () ->
+        return n1.invoke('n2', 'ping', ['42'])
+          .then((result) ->
+            expect(result).to.equal('pong: 42')
+          )
       )
-    )
 
-    it('should invoke with one argument and return value', (done) ->
-      n1.invoke('n2', 'ping', '42', (err, result) ->
-        if err then return done(err)
-
-        expect(result).to.equal('pong: 42')
-        done()
+      it('should return error of invoked function', () ->
+        catched = false
+        return n1.invoke('n2', 'error', [])
+          .catch((error) ->
+            expect(error.message).to.equal('this is an error')
+            catched = true
+          )
+          .then(() -> expect(catched).to.be.true)
       )
-    )
 
-    it('should invoke with multiple arguments and return value', (done) ->
-      n1.invoke('n2', 'add', [40, 2], (err, result) ->
-        if err then return done(err)
-
-        expect(result).to.equal(42)
-        done()
+      it('should invoke with multiple arguments and return value', () ->
+        return n1.invoke('n2', 'add', [40, 2])
+          .then((result) ->
+            expect(result).to.equal(42)
+          )
       )
-    )
 
-    it('should be able to reference scope in invoked functions', (done) ->
-      n1.invoke('n2', 'getAnswer', undefined, (err, result) ->
-        if err then return done(err)
-
-        expect(result).to.equal(42)
-        done()
+      it('should be able to reference scope in invoked functions', () ->
+        return n1.invoke('n2', 'getAnswer', [])
+          .then((result) ->
+            expect(result).to.equal(42)
+          )
       )
-    )
 
-    it('should return error if the function does not exits', (done) ->
-      n1.invoke('n2', 'non-existing-function', undefined, (err, result) ->
-        expect(err.message).to.equal('unknown function')
-        done()
-      )
-    )
-
-    it('should return attribute value', (done) ->
-      n1.attr('n2', 'answer', (err, result) ->
-        if err then return done(err)
-
-        expect(result).to.equal(42)
-        done()
+      it('should return error if the function does not exits', () ->
+        catched = false
+        return n1.invoke('n2', 'non-existing-function', [])
+          .catch((err) ->
+            expect(err.message).to.equal('unknown function')
+            catched = true
+          )
+          .then(() -> expect(catched).to.be.true)
       )
     )
   )
 
-  describe('using promises', () ->
-    it('should ping and receive pong', () ->
-      return n1.ping('n2')
-        .then((result) ->
-          expect(result).to.be.true
+  describe('.attr()', () ->
+    describe('using callbacks', () ->
+      it('should return attribute value', (done) ->
+        n1.attr('n2', 'answer', (err, result) ->
+          if err then return done(err)
+
+          expect(result).to.equal(42)
+          done()
         )
+      )
     )
 
-    it('should return false if ping times out', () ->
-      n = new RPCMock('n', scope, { timeout: 10 })
-      n.delays = {n2: 200}
-      return n.ping('n2')
-        .then((result) ->
+    describe('using promises', () ->
+      it('should return attribute value', () ->
+        return n1.attr('n2', 'answer')
+          .then((result) ->
+            expect(result).to.equal(42)
+          )
+      )
+    )
+  )
+
+  describe('.ping()', () ->
+    describe('using callbacks', () ->
+      it('should ping and receive pong', (done) ->
+        n1.ping('n2', (err, result) ->
+          expect(result).to.be.truthy
+          done()
+        )
+      )
+
+      it('should return false if ping times out', (done) ->
+        n = new RPCMock('n', scope, { timeout: 1 })
+        n.ping('n2', (err, result) ->
           expect(result).to.be.false
+          done()
         )
+      )
     )
 
-    it('should invoke with no arguments and return value', () ->
-      return n1.invoke('n2', 'pinger', undefined)
-        .then((result) ->
-          expect(result).to.equal('pong')
-        )
-    )
+    describe('using promises', () ->
+      it('should ping and receive pong', () ->
+        return n1.ping('n2')
+          .then((result) ->
+            expect(result).to.be.true
+          )
+      )
 
-    it('should invoke with one argument and return value', () ->
-      return n1.invoke('n2', 'ping', '42')
-        .then((result) ->
-          expect(result).to.equal('pong: 42')
-        )
-    )
-
-    it('should invoke with multiple arguments and return value', () ->
-      return n1.invoke('n2', 'add', [40, 2])
-        .then((result) ->
-          expect(result).to.equal(42)
-        )
-    )
-
-    it('should be able to reference scope in invoked functions', () ->
-      return n1.invoke('n2', 'getAnswer', undefined)
-        .then((result) ->
-          expect(result).to.equal(42)
-        )
-    )
-
-    it('should return error if the function does not exits', () ->
-      catched = false
-      return n1.invoke('n2', 'non-existing-function')
-        .catch((err) ->
-          expect(err.message).to.equal('unknown function')
-          catched = true
-        )
-        .then(() -> expect(catched).to.be.true)
-    )
-
-    it('should return attribute value', () ->
-      return n1.attr('n2', 'answer')
-        .then((result) ->
-          expect(result).to.equal(42)
-        )
+      it('should return false if ping times out', () ->
+        n = new RPCMock('n', scope, { timeout: 1 })
+        return n.ping('n2')
+          .then((result) ->
+            expect(result).to.be.false
+          )
+      )
     )
   )
 )
