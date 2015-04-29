@@ -1,4 +1,4 @@
-# peerjs-rpc-mock [![Build status](https://ci.frigg.io/badges/relekang/peerjs-rpc-mock/)](https://ci.frigg.io/relekang/peerjs-rpc-mock/last/) [![Coverage status](https://ci.frigg.io/badges/coverage/relekang/peerjs-rpc-mock/)](https://ci.frigg.io/relekang/peerjs-rpc-mock/last/)
+# peerjs-rpc-mock [![Build status](https://ci.frigg.io/badges/relekang/peerjs-rpc-mock/)](https://ci.frigg.io/relekang/peerjs-rpc-mock/last/) [![Coverage status](https://ci.frigg.io/badges/coverage/relekang/peerjs-rpc-mock/)](https://ci.frigg.io/relekang/peerjs-rpc-mock/last/) [![Dependency Status](https://david-dm.org/relekang/peerjs-rpc-mock.svg)](https://david-dm.org/relekang/peerjs-rpc-mock)
 
 Mock for peerjs-rpc, mainly built for nodejs simulations
 
