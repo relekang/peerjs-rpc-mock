@@ -1,6 +1,6 @@
 {
   "name": "peerjs-rpc-mock",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Mock for peerjs-rpc, mainly built for nodejs simulations",
   "main": "lib/RPCMock",
   "scripts": {
@@ -30,7 +30,7 @@
   "dependencies": {
     "bluebird": "^2.9.12",
     "mock-require": "^1.0.5",
-    "peerjs-rpc": "^3.1.1"
+    "peerjs-rpc": "^3.2.0"
   },
   "devDependencies": {
     "bailey": "0.0.17",
