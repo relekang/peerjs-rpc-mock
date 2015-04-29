@@ -33,7 +33,7 @@
     "peerjs-rpc": "^3.1.1"
   },
   "devDependencies": {
-    "bailey": "0.0.15",
+    "bailey": "0.0.17",
     "chai": "*",
     "istanbul": "*",
     "karma": "*",

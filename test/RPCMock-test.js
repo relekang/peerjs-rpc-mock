@@ -1,3 +1,4 @@
+"use strict";
 var __module_chai = require("chai");
 var RPCMock = require("../lib/RPCMock");
 var expect = __module_chai.expect;
