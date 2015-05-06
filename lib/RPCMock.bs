@@ -13,6 +13,9 @@ class RPCMock extends RPC
     mocks[id] = @
     @delays = {}
     @timeout = 5000
+    @_callbacks = {}
+    @_timeouts = {}
+
     if options
       @delays = {}
       @timeout = options.timeout or 5000

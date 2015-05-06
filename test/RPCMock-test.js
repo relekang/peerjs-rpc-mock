@@ -47,6 +47,7 @@ describe('RPCMock', function() {
             expect(end - start).to.be.above(500);
         });
     });
+
     describe('.invoke()', function() {
         describe('using callbacks', function() {
             it('should invoke with no arguments and return value', function(done) {
